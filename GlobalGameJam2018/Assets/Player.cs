@@ -8,6 +8,8 @@ public class Player : MonoBehaviour {
     SpriteRenderer spr;
     float speed = 1;
     List<Husk> nearbyHusks = new List<Husk>();
+    public Transform tower;
+    public bool controllingHusks;
 
 	// Use this for initialization
 	void Start () {
@@ -22,6 +24,7 @@ public class Player : MonoBehaviour {
             if (Input.GetKeyDown(KeyCode.Space)) {
                 nearbyHusks[0].master = this;
                 nearbyHusks[0].idle = false;
+                nearbyHusks[0].spr.sprite = C.c.sprites[1];
                 nearbyHusks.RemoveAt(0);
             }
         }

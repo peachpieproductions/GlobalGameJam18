@@ -330,6 +330,10 @@ MonoBehaviour:
   - {fileID: 1944008912574478, guid: 87a88e43f59346a4887d85f3f341232b, type: 2}
   - {fileID: 1647533373611654, guid: faea165168713094e92329f6eb141ba1, type: 2}
   - {fileID: 1808160505}
+  sprites:
+  - {fileID: 21300000, guid: 26b3354dee4b85948ae1c7fcae7d2fee, type: 3}
+  - {fileID: 21300000, guid: 2ff2fb5562170b241b422698e0a0eaf0, type: 3}
+  - {fileID: 21300000, guid: 2a58ea10897ce7744bd278e6c2b63c1f, type: 3}
 --- !u!4 &418932562
 Transform:
   m_ObjectHideFlags: 0
@@ -564,6 +568,11 @@ Prefab:
       propertyPath: m_RootOrder
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 114901619521306040, guid: 6399972f4659cea4189939b8dcc48802,
+        type: 2}
+      propertyPath: tower
+      value: 
+      objectReference: {fileID: 1483788723}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 6399972f4659cea4189939b8dcc48802, type: 2}
   m_IsPrefabParent: 0
@@ -613,6 +622,11 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: faea165168713094e92329f6eb141ba1, type: 2}
   m_IsPrefabParent: 0
+--- !u!4 &1483788723 stripped
+Transform:
+  m_PrefabParentObject: {fileID: 4837944453467230, guid: a7d720f6c03c43d428917f0e14464260,
+    type: 2}
+  m_PrefabInternal: {fileID: 373887502}
 --- !u!1 &1491765165
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,6 +7,7 @@ public class C : MonoBehaviour {
     public static C c;
     public int size = 32;
     public GameObject[] prefabs;
+    public Sprite[] sprites;
 
 	// Use this for initialization
 	void Start () {

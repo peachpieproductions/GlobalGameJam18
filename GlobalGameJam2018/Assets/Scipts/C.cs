@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class C : MonoBehaviour {
 
@@ -8,6 +9,7 @@ public class C : MonoBehaviour {
     public int size = 32;
     public GameObject[] prefabs;
     public Sprite[] sprites;
+    public Text[] goldTexts;
 
 	// Use this for initialization
 	void Start () {

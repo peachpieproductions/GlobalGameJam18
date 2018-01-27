@@ -66,7 +66,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1893344306843094}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.1, y: -3.25, z: 0.017173197}
+  m_LocalPosition: {x: -6.72, y: -4.29, z: 0.017173197}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4202387350103054}
@@ -122,7 +122,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.6
+  m_Radius: 0.75
 --- !u!114 &114901619521306040
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -134,7 +134,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7237a517cfade14f85e209ab0853105, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  p: 0
   tower: {fileID: 0}
+  controllingHusks: 0
+  controllingList: []
+  husks: []
+  gold: 0
 --- !u!212 &212517995224152222
 SpriteRenderer:
   m_ObjectHideFlags: 1

@@ -1,18 +1,27 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using XInputDotNetPure;
 
 public class Player : MonoBehaviour {
 
     Rigidbody2D rb;
     SpriteRenderer spr;
+    public int p;
     float speed = 1;
     List<Husk> nearbyHusks = new List<Husk>();
     public Transform tower;
     public bool controllingHusks;
+    public List<Husk> controllingList = new List<Husk>();
+    public List<Husk> husks = new List<Husk>();
+    internal Vector2 lStickAxis;
+    public int gold;
 
-	// Use this for initialization
-	void Start () {
+    //controller stuff
+    bool aHeld;
+
+    // Use this for initialization
+    void Start () {
         rb = GetComponent<Rigidbody2D>();
         spr = transform.GetChild(0).GetComponent<SpriteRenderer>();
 	}
@@ -20,45 +29,56 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        var gp = GamePad.GetState((PlayerIndex)p);
+
         if (nearbyHusks.Count != 0) {
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                nearbyHusks[0].master = this;
-                nearbyHusks[0].idle = false;
-                nearbyHusks[0].spr.sprite = C.c.sprites[1];
-                nearbyHusks.RemoveAt(0);
+            if (gp.Buttons.A == ButtonState.Pressed && !aHeld) { //possess
+                nearbyHusks[0].possessProgress += .5f;
+                if (nearbyHusks[0].possessProgress > 6f) {
+                    nearbyHusks[0].master = this;
+                    nearbyHusks[0].idle = false;
+                    nearbyHusks[0].spr.sprite = C.c.sprites[1+p];
+                    nearbyHusks[0].type = p + 1;
+                    husks.Add(nearbyHusks[0]);
+                    nearbyHusks.RemoveAt(0);
+                }
             }
         }
 
-		if (Input.GetKey(KeyCode.W)) {
-            rb.velocity += Vector2.up * speed;
+        if (Vector3.Distance(transform.position,tower.position) < 2) { //control peeps
+            if (gp.Buttons.A == ButtonState.Pressed && !aHeld && controllingList.Count < husks.Count) {
+                husks[controllingList.Count].controlStartStop(true);
+                controllingList.Add(husks[controllingList.Count]);
+            }
         }
-        if (Input.GetKey(KeyCode.S)) {
-            rb.velocity += Vector2.down * speed;
+        
+        lStickAxis = new Vector2(gp.ThumbSticks.Left.X, gp.ThumbSticks.Left.Y);
+
+        if (controllingList.Count == 0) { //not controlling yer bois
+            rb.velocity += lStickAxis; //move
         }
-        if (Input.GetKey(KeyCode.A)) {
-            rb.velocity += Vector2.left * speed;
-        }
-        if (Input.GetKey(KeyCode.D)) {
-            rb.velocity += Vector2.right * speed;
-        }
+
         if (rb.velocity.magnitude > 3) rb.velocity = rb.velocity.normalized * 3;
 
         if (rb.velocity.x < 0) spr.flipX = true;
         if (rb.velocity.x > 0) spr.flipX = false;
 
         rb.velocity *= .9f;
-	}
+
+        aHeld = (gp.Buttons.A == ButtonState.Pressed);
+
+    }
 
     private void OnTriggerEnter2D(Collider2D collision) {
         if (collision.CompareTag("Husk")) {
-            if (collision.GetComponent<Husk>().idle)
+            if (collision.GetComponent<Husk>().type == 0)
                 nearbyHusks.Add(collision.GetComponent<Husk>());
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision) {
         if (collision.CompareTag("Husk")) {
-            if (collision.GetComponent<Husk>().idle)
+            if (collision.GetComponent<Husk>().type == 0)
                 nearbyHusks.Remove(collision.GetComponent<Husk>());
         }
     }

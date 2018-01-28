@@ -47,8 +47,14 @@ public class Player : MonoBehaviour {
 
         if (Vector3.Distance(transform.position,tower.position) < 2) { //control peeps
             if (gp.Buttons.A == ButtonState.Pressed && !aHeld && controllingList.Count < husks.Count) {
-                husks[controllingList.Count].controlStartStop(true);
-                controllingList.Add(husks[controllingList.Count]);
+                Husk husk = husks[0];
+                int attempt = 0;
+                while (husk == null || husk.holdingGold || husk.controlling) {
+                    husk = husks[Random.Range(0, husks.Count)];
+                    attempt++; if (attempt > 100) break;
+                }
+                husk.controlStartStop(true);
+                controllingList.Add(husk);
             }
         }
         

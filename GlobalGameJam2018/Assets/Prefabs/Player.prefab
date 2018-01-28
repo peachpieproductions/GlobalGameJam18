@@ -136,6 +136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   p: 0
   tower: {fileID: 0}
+  towerHp: 150
   controllingHusks: 0
   controllingList: []
   husks: []

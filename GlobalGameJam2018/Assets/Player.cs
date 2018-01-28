@@ -11,19 +11,23 @@ public class Player : MonoBehaviour {
     float speed = 1;
     List<Husk> nearbyHusks = new List<Husk>();
     public Transform tower;
+    public float towerHp = 100;
     public bool controllingHusks;
     public List<Husk> controllingList = new List<Husk>();
     public List<Husk> husks = new List<Husk>();
     internal Vector2 lStickAxis;
     public int gold;
+    public bool towerDestroyed;
 
     //controller stuff
     bool aHeld;
+    bool yHeld;
 
     // Use this for initialization
     void Start () {
         rb = GetComponent<Rigidbody2D>();
         spr = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        StartCoroutine(SlowUpdate());
 	}
 	
 	// Update is called once per frame
@@ -34,27 +38,42 @@ public class Player : MonoBehaviour {
         if (nearbyHusks.Count != 0) {
             if (gp.Buttons.A == ButtonState.Pressed && !aHeld) { //possess
                 nearbyHusks[0].possessProgress += .5f;
-                if (nearbyHusks[0].possessProgress > 6f) {
-                    nearbyHusks[0].master = this;
-                    nearbyHusks[0].idle = false;
-                    nearbyHusks[0].spr.sprite = C.c.sprites[1+p];
-                    nearbyHusks[0].type = p + 1;
-                    husks.Add(nearbyHusks[0]);
+                nearbyHusks[0].transform.GetChild(4).gameObject.SetActive(true);
+                if (nearbyHusks[0].possessProgress > 5f) {
+                    nearbyHusks[0].Possess(p);
                     nearbyHusks.RemoveAt(0);
                 }
             }
         }
 
-        if (Vector3.Distance(transform.position,tower.position) < 2) { //control peeps
-            if (gp.Buttons.A == ButtonState.Pressed && !aHeld && controllingList.Count < husks.Count) {
-                Husk husk = husks[0];
-                int attempt = 0;
-                while (husk == null || husk.holdingGold || husk.controlling) {
-                    husk = husks[Random.Range(0, husks.Count)];
-                    attempt++; if (attempt > 100) break;
+        if (!towerDestroyed) {
+            if (Vector3.Distance(transform.position, tower.position) < 2) { //near tower
+                if (gp.Buttons.A == ButtonState.Pressed && !aHeld && controllingList.Count < husks.Count) { //control peeps
+                    for (var i = 0; i < husks.Count; i++) {
+                        if (!husks[i].holdingGold && !husks[i].controlling) {
+                            husks[i].controlStartStop(true);
+                            controllingList.Add(husks[i]);
+                            break;
+                        }
+                    }
                 }
-                husk.controlStartStop(true);
-                controllingList.Add(husk);
+                if (gp.Buttons.Y == ButtonState.Pressed && !yHeld) { //buy a Husk
+                    if (gold >= 10) {
+                        gold -= 10;
+                        C.c.goldTexts[p].text = gold.ToString();
+                        var inst = Instantiate(C.c.prefabs[2], C.c.towers[p].position, Quaternion.identity).GetComponent<Husk>();
+                        inst.Possess(p);
+                    }
+                }
+            }
+        }
+
+        if (controllingList.Count > 0) { //Deselect Peeps
+            if (gp.Buttons.B == ButtonState.Pressed) {
+                foreach(Husk h in controllingList) {
+                    h.controlStartStop(false);
+                }
+                controllingList.Clear();
             }
         }
         
@@ -72,7 +91,24 @@ public class Player : MonoBehaviour {
         rb.velocity *= .9f;
 
         aHeld = (gp.Buttons.A == ButtonState.Pressed);
+        yHeld = (gp.Buttons.Y == ButtonState.Pressed);
 
+        //tower death
+        C.c.hpBars[p].localScale = new Vector2(towerHp / 150, 1);
+        if (towerHp <= 0 && !towerDestroyed) {
+            towerDestroyed = true;
+            Destroy(C.c.towers[p].gameObject);
+        }
+
+    }
+
+    IEnumerator SlowUpdate() {
+        while (true) {
+            var pos = transform.position;
+            pos.z = 1 + pos.y * .01f;
+            transform.position = pos;
+            yield return new WaitForSeconds(.25f);
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision) {

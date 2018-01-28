@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using XInputDotNetPure;
+using UnityEngine.SceneManagement;
 
 public class C : MonoBehaviour {
 
@@ -20,12 +21,15 @@ public class C : MonoBehaviour {
     public RectTransform title;
     bool titleShowing = true;
     int tutorial;
-    bool gameStarted;
+    public static bool gameStarted;
+    public static bool gameOver;
+    public static AudioManager am;
+    public GameObject gameOverPanel;
 
 	// Use this for initialization
 	void Start () {
         c = this;
-
+        am = GameObject.Find("AudioManager").GetComponent<AudioManager>();
         fadePanel.gameObject.SetActive(true);
 
         //tower z depth
@@ -51,9 +55,18 @@ public class C : MonoBehaviour {
 
     private void Update() {
 
+        if (gameOver) {
+            if (GamePad.GetState((PlayerIndex)0).Buttons.Start == ButtonState.Pressed) {
+                gameOver = false;
+                gameStarted = false;
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            }
+            return;
+        }
+
         if (fadeIn > 0) {
-            if (title.localPosition.y > 110) title.localPosition = new Vector2(0, title.localPosition.y - 1);
-            else if (title.localPosition.y > 0) title.localPosition = new Vector2(0, title.localPosition.y - title.localPosition.y * .01f);
+            if (title.localPosition.y > 110) title.localPosition = new Vector2(0, title.localPosition.y - Time.deltaTime * 200);
+            else if (title.localPosition.y > 0) title.localPosition = new Vector2(0, title.localPosition.y - title.localPosition.y * Time.deltaTime );
             fadeIn -= Time.deltaTime * .25f;
             var col = fadePanel.color;
             col.a = fadeIn;

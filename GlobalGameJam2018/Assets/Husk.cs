@@ -33,6 +33,7 @@ public class Husk : MonoBehaviour {
             else if (enemyTarget != null || enemyTower != null) {
                 if (attackingTimer > 0) attackingTimer -= Time.deltaTime;
                 if (attackTimer <= 0) { //attack
+                    C.am.PlaySound(6);
                     if (enemyTarget != null) rb.velocity = (enemyTarget.transform.position - transform.position).normalized * 6;
                     else rb.velocity = (enemyTower.transform.position - transform.position).normalized * 6;
                     attackTimer = 1f + Random.Range(0,.5f);
@@ -51,7 +52,8 @@ public class Husk : MonoBehaviour {
                     rb.velocity += (Vector2)(master.tower.position - transform.position).normalized;
                     if (rb.velocity.magnitude > 3) rb.velocity = rb.velocity.normalized * 3;
                 } else {
-                    if (holdingGold) {
+                    if (holdingGold) { //store gold
+                        C.am.PlaySound(4);
                         holdingGold = false;
                         transform.GetChild(1).gameObject.SetActive(false);
                         master.gold++;
@@ -128,7 +130,8 @@ public class Husk : MonoBehaviour {
                         spr.sprite = C.c.sprites[3];
                         if (hp <= 0) {
                             Destroy(gameObject);
-                        }
+                            C.am.PlaySound(8);
+                        } else C.am.PlaySound(7);
                     }
                 }
             }
@@ -136,6 +139,7 @@ public class Husk : MonoBehaviour {
             if (master != null) {
                 if (controlling) {
                     if (!holdingGold) {
+                        C.am.PlaySound(3);
                         holdingGold = true;
                         transform.GetChild(1).gameObject.SetActive(true);
                         controlStartStop(false);
@@ -150,6 +154,7 @@ public class Husk : MonoBehaviour {
                 if (enemyTower == collision.transform) {
                     if (rb.velocity.magnitude > 1 && enemyTarget == null) {
                         C.c.players[(type == 1 ? 1 : 0)].towerHp--;
+                        C.am.PlaySound(9);
                     }
                 }
             }

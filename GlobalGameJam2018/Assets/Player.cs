@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using XInputDotNetPure;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour {
 
@@ -40,9 +41,10 @@ public class Player : MonoBehaviour {
                 nearbyHusks[0].possessProgress += .5f;
                 nearbyHusks[0].transform.GetChild(4).gameObject.SetActive(true);
                 if (nearbyHusks[0].possessProgress > 5f) {
+                    C.am.PlaySound(1);
                     nearbyHusks[0].Possess(p);
                     nearbyHusks.RemoveAt(0);
-                }
+                } else { C.am.PlaySound(0); }
             }
         }
 
@@ -51,6 +53,7 @@ public class Player : MonoBehaviour {
                 if (gp.Buttons.A == ButtonState.Pressed && !aHeld && controllingList.Count < husks.Count) { //control peeps
                     for (var i = 0; i < husks.Count; i++) {
                         if (!husks[i].holdingGold && !husks[i].controlling) {
+                            C.am.PlaySound(2);
                             husks[i].controlStartStop(true);
                             controllingList.Add(husks[i]);
                             break;
@@ -59,6 +62,7 @@ public class Player : MonoBehaviour {
                 }
                 if (gp.Buttons.Y == ButtonState.Pressed && !yHeld) { //buy a Husk
                     if (gold >= 10) {
+                        C.am.PlaySound(5);
                         gold -= 10;
                         C.c.goldTexts[p].text = gold.ToString();
                         var inst = Instantiate(C.c.prefabs[2], C.c.towers[p].position, Quaternion.identity).GetComponent<Husk>();
@@ -97,7 +101,12 @@ public class Player : MonoBehaviour {
         C.c.hpBars[p].localScale = new Vector2(towerHp / 150, 1);
         if (towerHp <= 0 && !towerDestroyed) {
             towerDestroyed = true;
+            C.am.PlaySound(10);
             Destroy(C.c.towers[p].gameObject);
+            C.c.gameOverPanel.SetActive(true);
+            if (p == 0) C.c.gameOverPanel.transform.GetChild(0).GetComponent<Text>().text = "Player 2 Wins!!!";
+            else C.c.gameOverPanel.transform.GetChild(0).GetComponent<Text>().text = "Player 1 Wins!!!";
+            C.gameOver = true;
         }
 
     }

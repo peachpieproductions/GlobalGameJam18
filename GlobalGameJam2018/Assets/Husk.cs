@@ -129,6 +129,8 @@ public class Husk : MonoBehaviour {
                         hp--;
                         spr.sprite = C.c.sprites[3];
                         if (hp <= 0) {
+                            master.controllingList.Remove(this);
+                            master.husks.Remove(this);
                             Destroy(gameObject);
                             C.am.PlaySound(8);
                         } else C.am.PlaySound(7);

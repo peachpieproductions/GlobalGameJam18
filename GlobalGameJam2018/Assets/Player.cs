@@ -34,6 +34,8 @@ public class Player : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
+        if (!C.gameStarted) return;
+
         var gp = GamePad.GetState((PlayerIndex)p);
 
         if (nearbyHusks.Count != 0) {
@@ -65,7 +67,7 @@ public class Player : MonoBehaviour {
                         C.am.PlaySound(5);
                         gold -= 10;
                         C.c.goldTexts[p].text = gold.ToString();
-                        var inst = Instantiate(C.c.prefabs[2], C.c.towers[p].position, Quaternion.identity).GetComponent<Husk>();
+                        var inst = Instantiate(C.c.prefabs[2], C.c.towers[p].position + Vector3.down, Quaternion.identity).GetComponent<Husk>();
                         inst.Possess(p);
                     }
                 }
